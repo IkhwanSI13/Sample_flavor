@@ -1,0 +1,92 @@
+apply plugin: 'com.android.application'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
+    defaultConfig {
+        applicationId "ikhwankoto.com.sample_flavor"
+        minSdkVersion 17
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        debug {
+            buildConfigField "String", 'SECURE_KEY', '"0987654321"'
+        }
+
+        release {
+            buildConfigField "String", 'SECURE_KEY', '"1234567890"'
+
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    flavorDimensions "version", "client"
+    productFlavors {
+        //without applicationIdSuffix
+        //ikhwankoto.com.sample_falvor
+
+        dev {
+            dimension "version"
+            //if just one flavor
+            //ikhwankoto.com.sample_falvor.dev
+            applicationIdSuffix ".dev"
+        }
+        prod {
+            dimension "version"
+            //if just one flavor
+            //ikhwankoto.com.sample_falvor.prod
+            applicationIdSuffix ".prod"
+        }
+
+        client1 {
+            dimension "client"
+            //ikhwankoto.com.sample_falvor.dev.client1
+            //ikhwankoto.com.sample_falvor.prod.client1
+            applicationIdSuffix ".client1"
+        }
+        client2 {
+            dimension "client"
+            //ikhwankoto.com.sample_falvor.dev.client2
+            //ikhwankoto.com.sample_falvor.prod.client2
+            applicationIdSuffix ".client2"
+        }
+    }
+
+    applicationVariants.all { variant ->
+        def name = variant.getName()
+        variant.buildConfigField 'String', 'SECURE_KEY2', '"none"'
+
+        // Default values
+        variant.buildConfigField 'boolean', 'SECURE_DEFAULT', 'false'
+
+        // Specific values
+        if (name.contains("dev")) {
+            variant.buildConfigField 'String', 'SECURE_KEY3', '"dev"'
+        } else if (name.contains("prod")) {
+            variant.buildConfigField 'String', 'SECURE_KEY3', '"prod"'
+            // Change to true for this variant
+            variant.buildConfigField 'boolean', 'SECURE_DEFAULT', 'true'
+        } else {
+            variant.buildConfigField 'String', 'SECURE_KEY3', '"not dev nor prod'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.core:core-ktx:1.0.2'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+}
